@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="Pulse is a lightweight API and website monitoring dashboard.">
+  <title>Pulse — API Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark">P</span><span>pulse<span class="brand-dot">.</span></span></a>
+      <span class="local-label"><i></i> LOCAL MONITOR</span>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow">SYSTEM OVERVIEW</p>
+        <h1>Know when things<br><span>go quiet.</span></h1>
+        <p class="subtitle">A simple command centre for checking your APIs and websites.</p>
+      </div>
+      <div class="pulse-orb" aria-hidden="true"><span></span></div>
+    </section>
+
+    <section class="stats">
+      <article class="stat-card"><span class="stat-label">MONITORED</span><strong>{{ total }}</strong><small>Endpoints</small></article>
+      <article class="stat-card"><span class="stat-label">CURRENTLY UP</span><strong class="good">{{ up }}</strong><small>Latest checks</small></article>
+      <article class="stat-card"><span class="stat-label">TOTAL CHECKS</span><strong>{{ checks }}</strong><small>All-time checks</small></article>
+    </section>
+
+    <section class="panel add-panel">
+      <div class="section-heading">
+        <div><p class="eyebrow">NEW TARGET</p><h2>Add an endpoint</h2></div>
+        <span class="plus-icon">+</span>
+      </div>
+      <form id="add-form">
+        <label>DISPLAY NAME<input name="name" maxlength="80" placeholder="e.g. My portfolio API" required></label>
+        <label>ENDPOINT URL<input name="url" type="url" placeholder="https://example.com/health" required></label>
+        <button class="primary-button" type="submit">Add endpoint <span>→</span></button>
+      </form>
+      <p class="form-note">Only public HTTP and HTTPS endpoints are accepted. Checks are manual.</p>
+      <p id="notice" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="targets-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">LIVE INVENTORY</p><h2>Your endpoints <span class="count">{{ total }}</span></h2></div>
+      </div>
+      <div id="endpoint-list" class="endpoint-list">
+        {% for endpoint in endpoints %}
+        <article class="endpoint-card" data-id="{{ endpoint.id }}">
+          <div class="endpoint-main">
+            <span class="status-dot {% if endpoint.last_up == 1 %}online{% elif endpoint.last_up == 0 %}offline{% else %}unknown{% endif %}"></span>
+            <div class="endpoint-info"><h3>{{ endpoint.name }}</h3><p>{{ endpoint.url }}</p></div>
+          </div>
+          <div class="endpoint-metrics">
+            <div><small>STATUS</small><strong>{% if endpoint.last_status %}{{ endpoint.last_status }}{% elif endpoint.last_up == 0 %}DOWN{% else %}—{% endif %}</strong></div>
+            <div><small>RESPONSE</small><strong>{% if endpoint.last_response is not none %}{{ endpoint.last_response }} ms{% else %}—{% endif %}</strong></div>
+            <div><small>UPTIME</small><strong>{% if endpoint.uptime is not none %}{{ endpoint.uptime }}%{% else %}—{% endif %}</strong></div>
+          </div>
+          <div class="endpoint-actions">
+            <button class="check-button" data-action="check">Check now ↗</button>
+            <button class="history-button" data-action="history">History</button>
+            <button class="delete-button" data-action="delete" aria-label="Delete {{ endpoint.name }}">×</button>
+          </div>
+          <div class="history" hidden></div>
+        </article>
+        {% else %}
+        <div class="empty-state"><div class="empty-icon">⌁</div><h3>No endpoints yet</h3><p>Add your first public API or website above to begin monitoring.</p></div>
+        {% endfor %}
+      </div>
+    </section>
+    <footer><span>PULSE <b>·</b> API MONITOR</span><span>Built for visibility.</span></footer>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
