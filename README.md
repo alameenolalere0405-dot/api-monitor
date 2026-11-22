@@ -2,6 +2,26 @@
 
 Pulse is a lightweight, responsive dashboard for manually checking public APIs and websites. It is built with Python, Flask, SQLite, and vanilla JavaScript.
 
+## Project structure
+
+```text
+api-monitor/
+├── app/
+│   ├── __init__.py
+│   ├── static/
+│   │   ├── app.js
+│   │   └── style.css
+│   └── templates/
+│       └── index.html
+├── tests/
+│   └── test_app.py
+├── .gitignore
+├── LICENSE
+├── README.md
+├── requirements.txt
+└── run.py
+```
+
 ## Features
 
 - Add and remove HTTP/HTTPS endpoints
@@ -31,12 +51,18 @@ Pulse is a lightweight, responsive dashboard for manually checking public APIs a
 5. Start the app:
 
    ```bash
-   python app.py
+   python run.py
    ```
 
 6. Open http://127.0.0.1:5000 in your browser.
 
 The SQLite database (`pulse.db`) is created automatically on first run.
+
+## Run tests
+
+```bash
+python -m unittest discover -s tests -v
+```
 
 ## API routes
 
@@ -50,13 +76,9 @@ The SQLite database (`pulse.db`) is created automatically on first run.
 
 ## Important security note
 
-This is an educational portfolio project, not a production-ready public monitoring service. It accepts only public HTTP/HTTPS targets, checks DNS results against non-public IP ranges, uses request timeouts, and does not follow redirects. However, DNS rebinding and other server-side request forgery risks require stronger network-level controls than this small demo provides.
+This is an educational portfolio project, not a production-ready public monitoring service. It accepts only public HTTP/HTTPS targets, checks DNS results against non-public IP ranges, uses request timeouts, and stores only local SQLite data. This does not replace production-grade SSRF controls.
 
-Before exposing it to the public internet, add authentication, CSRF protection, rate limiting, background job isolation, strict egress/network controls, and robust DNS/IP pinning. Do not deploy it as a public service in its current form.
-
-## Current scope
-
-Checks are manual; there is no scheduler, alerting, or charting yet. Uptime percentages are calculated from the checks stored in the local database.
+Before exposing it to the public internet, add authentication, CSRF protection, rate limiting, background job isolation, strict egress/network controls, and robust DNS/IP pinning.
 
 ## License
 
