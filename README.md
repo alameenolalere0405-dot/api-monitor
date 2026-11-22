@@ -1,6 +1,16 @@
 # Pulse — API Monitor
 
-Pulse is a lightweight, responsive dashboard for manually checking public APIs and websites. It is built with Python, Flask, SQLite, and vanilla JavaScript.
+Pulse is a lightweight, responsive API and website monitoring dashboard built with Flask and SQLite.
+
+## Features
+
+- Add, check, and delete monitored endpoints
+- Public HTTP/HTTPS URL validation
+- Private and local-network SSRF protection
+- HTTP status codes and response-time tracking
+- Uptime percentages and recent check history
+- Responsive dashboard with no frontend framework
+- SQLite storage with automatic schema initialization
 
 ## Project structure
 
@@ -22,16 +32,6 @@ api-monitor/
 └── run.py
 ```
 
-## Features
-
-- Add and remove HTTP/HTTPS endpoints
-- Run manual availability checks
-- View HTTP status and response time
-- See average uptime based on recorded checks
-- Review the latest 20 checks for each endpoint
-- Responsive dark dashboard
-- SQLite storage; no external database required
-
 ## Requirements
 
 - Python 3.10 or newer
@@ -39,46 +39,45 @@ api-monitor/
 
 ## Run locally
 
-1. Clone or download this repository.
-2. Open a terminal in the project folder.
-3. (Optional) Create and activate a virtual environment.
-4. Install dependencies:
+```bash
+python -m venv .venv
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+# macOS/Linux
+source .venv/bin/activate
 
-5. Start the app:
+# Windows
+.venv\Scripts\activate
 
-   ```bash
-   python run.py
-   ```
+pip install -r requirements.txt
+python run.py
+```
 
-6. Open http://127.0.0.1:5000 in your browser.
+Open http://127.0.0.1:5000.
 
-The SQLite database (`pulse.db`) is created automatically on first run.
+The SQLite database is stored at `pulse.db` and is created automatically.
 
-## Run tests
+## Tests
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-## API routes
+## API
 
 | Method | Route | Purpose |
 |---|---|---|
-| GET | `/` | Dashboard |
-| POST | `/api/endpoints` | Add an endpoint |
-| POST | `/api/endpoints/<id>/check` | Run a manual check |
-| GET | `/api/endpoints/<id>/history` | Read recent check history |
-| DELETE | `/api/endpoints/<id>` | Delete an endpoint |
+| `GET` | `/` | Dashboard |
+| `GET` | `/health` | Application health check |
+| `POST` | `/api/endpoints` | Add an endpoint |
+| `POST` | `/api/endpoints/<id>/check` | Run a check |
+| `GET` | `/api/endpoints/<id>/history` | Read recent history |
+| `DELETE` | `/api/endpoints/<id>` | Delete an endpoint |
 
-## Important security note
+## Security
 
-This is an educational portfolio project, not a production-ready public monitoring service. It accepts only public HTTP/HTTPS targets, checks DNS results against non-public IP ranges, uses request timeouts, and stores only local SQLite data. This does not replace production-grade SSRF controls.
+This is an educational, local-first monitoring application—not a production service. It validates public HTTP/HTTPS targets before every check and blocks private, loopback, link-local, reserved, multicast, and unspecified IP addresses.
 
-Before exposing it to the public internet, add authentication, CSRF protection, rate limiting, background job isolation, strict egress/network controls, and robust DNS/IP pinning.
+Before public deployment, add authentication, CSRF protection, rate limiting, persistent scheduler isolation, strict outbound networking, and a production WSGI server.
 
 ## License
 
